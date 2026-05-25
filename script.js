@@ -1,38 +1,80 @@
-// ============================================================
-// 1. HEADER SECTION FUNCTIONS
-// ============================================================
+﻿/*
+  Main JavaScript for portfolio site.
+  Functions are ordered by page structure and critical execution flow.
+*/
 
-//===========================================
-// 1.1 Scroll Effect: Scroll karne par header ka background change karna
-//===========================================
+/* --- Global DOM references --- */
+const body = document.body;
 const headerEl = document.querySelector(".header");
+const menuBtn = document.getElementById("menuBtn");
+const navbar = document.getElementById("navbar");
+const darkToggle = document.getElementById("darkToggle");
+const contactForm = document.querySelector(".contact-form");
 
-if (headerEl) {
-  const SCROLL_THRESHOLD = 50;
-
-  const handleScroll = () => {
-    headerEl.classList.toggle("scrolled", window.scrollY > SCROLL_THRESHOLD);
-  };
-
+/* --- Scroll manager (single rAF loop) --- */
+const ScrollManager = (function () {
+  const handlers = new Set();
   let ticking = false;
 
-  window.addEventListener("scroll", () => {
+  function onScroll() {
     if (!ticking) {
       requestAnimationFrame(() => {
-        handleScroll();
+        handlers.forEach((h) => {
+          try { h(); } catch (e) { console.error(e); }
+        });
         ticking = false;
       });
       ticking = true;
     }
-  });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  return {
+    add(handler) {
+      if (typeof handler === 'function') {
+        handlers.add(handler);
+        // run once to initialize
+        try { handler(); } catch (e) { console.error(e); }
+      }
+    },
+    remove(handler) {
+      handlers.delete(handler);
+    }
+  };
+})();
+
+/* --- Initial page fade effect --- */
+document.body.style.opacity = "0";
+document.body.style.transition = "opacity 0.6s ease-in";
+setTimeout(() => {
+  document.body.style.opacity = "1";
+}, 100);
+
+/* --- Load saved theme and refresh animations on page load --- */
+window.addEventListener("load", () => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "light") {
+    body.classList.add("light-mode");
+    const icon = darkToggle?.querySelector("i");
+    if (icon) {
+      icon.classList.replace("bi-moon", "bi-sun");
+    }
+  }
+
+  if (window.AOS) {
+    AOS.refresh();
+  }
+});
+
+/* --- Header scroll effect: add .scrolled after threshold --- */
+if (headerEl) {
+  const SCROLL_THRESHOLD = 50;
+  const handleHeaderScroll = () => headerEl.classList.toggle("scrolled", window.scrollY > SCROLL_THRESHOLD);
+  ScrollManager.add(handleHeaderScroll);
 }
 
-//===========================================
-// 1.2 Mobile Menu Toggle: Button click karne par menu dikhana
-//===========================================
-const menuBtn = document.getElementById("menuBtn");
-const navbar = document.getElementById("navbar");
-
+/* --- Mobile navigation toggle --- */
 if (menuBtn && navbar) {
   const icon = menuBtn.querySelector("i");
 
@@ -41,22 +83,17 @@ if (menuBtn && navbar) {
 
     icon?.classList.toggle("bi-list", !isActive);
     icon?.classList.toggle("bi-x", isActive);
-
-    // Accessibility
-    menuBtn.setAttribute("aria-expanded", isActive);
-
+    menuBtn.setAttribute("aria-expanded", String(isActive));
     document.body.classList.toggle("no-scroll", isActive);
   });
 }
 
-//===========================================
-// 1.3 Mobile screen par page click se menu close
-//===========================================
-document.addEventListener("click", function (e) {
-  if (window.innerWidth <= 991) {
-    if (!navbar.contains(e.target) && !menuBtn.contains(e.target)) {
+/* --- Close mobile menu when clicking outside on small screens --- */
+document.addEventListener("click", (event) => {
+  if (window.innerWidth <= 991 && menuBtn && navbar) {
+    const target = event.target;
+    if (!navbar.contains(target) && !menuBtn.contains(target)) {
       navbar.classList.remove("active");
-
       const icon = menuBtn.querySelector("i");
       if (icon) {
         icon.classList.remove("bi-x");
@@ -67,62 +104,55 @@ document.addEventListener("click", function (e) {
   }
 });
 
-// ============================================================
-// nav link per click karne par menu close karna (mobile view ke liye)
-// ============================================================
-const navLinks = navbar.querySelectorAll("a");
-navLinks.forEach((link) => {
-  link.addEventListener("click", () => {
-    if (window.innerWidth <= 991) {
-      navbar.classList.remove("active");
-
-      const icon = menuBtn.querySelector("i");
-      if (icon) {
-        icon.classList.remove("bi-x");
-        icon.classList.add("bi-list");
+/* --- Close mobile menu after clicking a navigation link --- */
+if (navbar && menuBtn) {
+  const navLinks = navbar.querySelectorAll("a");
+  navLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      if (window.innerWidth <= 991) {
+        navbar.classList.remove("active");
+        const icon = menuBtn.querySelector("i");
+        if (icon) {
+          icon.classList.remove("bi-x");
+          icon.classList.add("bi-list");
+        }
+        menuBtn.setAttribute("aria-expanded", "false");
       }
-      menuBtn.setAttribute("aria-expanded", "false");
+    });
+  });
+}
+
+/* --- Theme toggle for dark/light mode --- */
+if (darkToggle) {
+  darkToggle.addEventListener("click", () => {
+    body.classList.toggle("light-mode");
+    const icon = darkToggle.querySelector("i");
+
+    if (body.classList.contains("light-mode")) {
+      icon?.classList.replace("bi-moon", "bi-sun");
+      localStorage.setItem("theme", "light");
+    } else {
+      icon?.classList.replace("bi-sun", "bi-moon");
+      localStorage.setItem("theme", "dark");
     }
   });
-});
+}
 
-//===========================================
-// 2.1 Dark/Light Mode Toggle
-//===========================================
-const darkToggle = document.getElementById("darkToggle");
-const body = document.body;
-
-darkToggle.addEventListener("click", () => {
-  body.classList.toggle("light-mode");
-
-  const icon = darkToggle.querySelector("i");
-  if (body.classList.contains("light-mode")) {
-    icon.classList.replace("bi-moon", "bi-sun");
-    localStorage.setItem("theme", "light");
-  } else {
-    icon.classList.replace("bi-sun", "bi-moon");
-    localStorage.setItem("theme", "dark");
-  }
-});
-
-//===========================================
-// 2.2 DOWNLOAD RESUME FUNCTION
-//===========================================
+/* --- Resume download button handler --- */
 function downloadResume(event) {
   event.preventDefault();
 
   const link = document.createElement("a");
   link.href = "CV WEB.MS.pdf";
   link.download = "Mureed_Sajjad_CV.pdf";
-
   document.body.appendChild(link);
   link.click();
-
   document.body.removeChild(link);
 
   showDownloadMessage();
 }
 
+/* --- Show temporary download confirmation --- */
 function showDownloadMessage() {
   const message = document.createElement("div");
   message.textContent = "✅ CV Downloaded Successfully!";
@@ -141,21 +171,15 @@ function showDownloadMessage() {
   `;
 
   document.body.appendChild(message);
-
-  // Remove message after 3 seconds
   setTimeout(() => {
     message.style.animation = "slideOutRight 0.3s ease-out";
     setTimeout(() => {
-      if (message.parentNode) {
-        message.parentNode.removeChild(message);
-      }
+      message.remove();
     }, 300);
   }, 3000);
 }
 
-//===========================================
-// 2.2 TYPED.JS ANIMATION
-//===========================================
+/* --- Hero section typing animation --- */
 if (document.getElementById("typed")) {
   new Typed("#typed", {
     strings: [
@@ -164,71 +188,53 @@ if (document.getElementById("typed")) {
       "Tech Enthusiast",
       "Creative Developer",
     ],
-    typespeed: 30,
+    typeSpeed: 30,
     backSpeed: 25,
     backDelay: 1500,
     loop: true,
   });
 }
 
-// ============================================================
-// 3. ABOUT SECTION FUNCTIONS
-// ============================================================
-
-// ============================================================
-// 4. SERVICES SECTION FUNCTIONS
-// ============================================================
-
-// ============================================================
-// 5. SKILLS SECTION FUNCTIONS
-// ============================================================
-
-//===========================================
-// 5.1 SKILL PROGRESS BARS (ANIMATED)
-//===========================================
-function animateSkillBars() {
-  const skillBars = document.querySelectorAll(".skill-card");
-
-  skillBars.forEach((bar) => {
+/* --- Animate service/skill cards when they come into view --- */
+function animateSkillCards() {
+  const skillCards = document.querySelectorAll(".skill-card");
+  skillCards.forEach((card) => {
     const observer = new IntersectionObserver(
-      (entries) => {
+      (entries, obs) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            bar.style.animation = "slideInUp 0.5s ease-out";
-            observer.unobserve(bar);
+            card.style.animation = "slideInUp 0.5s ease-out";
+            obs.unobserve(card);
           }
         });
       },
       { threshold: 0.1 },
     );
-
-    observer.observe(bar);
+    observer.observe(card);
   });
 }
 
-animateSkillBars();
+/* --- Set skill bar widths based on data attributes --- */
+function setSkillBarWidths() {
+  const skillBars = document.querySelectorAll(".skill-bar");
+  skillBars.forEach((bar) => {
+    const width = bar.getAttribute("data-width");
+    if (width) {
+      bar.style.width = width + "%";
+    }
+  });
+}
 
-// ============================================================
-// 6. CERTIFICATIONS SECTION FUNCTIONS
-// ============================================================
-
-// ============================================================
-// 7. STATISTICS SECTION FUNCTIONS
-// ============================================================
-
-//===========================================
-// 7.1 INTERSECTION OBSERVER FOR COUNTERS
-//===========================================
+/* --- Counter animation for stats section --- */
 function createCounterAnimation() {
   const counters = document.querySelectorAll("[data-counter]");
-
   counters.forEach((counter) => {
-    const target = parseInt(counter.dataset.counter);
+    const target = parseInt(counter.dataset.counter, 10) || 0;
     let current = 0;
-    const increment = target / 100; // تقریبی رفتار
+    const increment = target / 100;
 
     const observer = new IntersectionObserver(
-      (entries) => {
+      (entries, obs) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && current === 0) {
             const timer = setInterval(() => {
@@ -240,8 +246,7 @@ function createCounterAnimation() {
                 counter.textContent = Math.floor(current);
               }
             }, 30);
-
-            observer.unobserve(counter);
+            obs.unobserve(counter);
           }
         });
       },
@@ -252,19 +257,8 @@ function createCounterAnimation() {
   });
 }
 
-createCounterAnimation();
-
-// ============================================================
-// 8. PROJECTS SECTION FUNCTIONS
-// ============================================================
-
-//===========================================
-// 8.1 PROJECT MODAL FUNCTIONS
-//===========================================
-
-// Project Modal ko open karne ka function
+/* --- Open project details modal and populate content --- */
 function openProjectModal(title, description, technologies, link, imageSrc) {
-  // Modal elements ko select karna
   const modal = document.getElementById("projectModal");
   const modalTitle = document.getElementById("modalProjectTitle");
   const modalDesc = document.getElementById("modalProjectDesc");
@@ -272,164 +266,78 @@ function openProjectModal(title, description, technologies, link, imageSrc) {
   const modalLink = document.getElementById("modalProjectLink");
   const modalImage = document.getElementById("modalProjectImage");
 
-  // Modal content ko update karna
   if (modalTitle) modalTitle.textContent = title;
   if (modalDesc) modalDesc.textContent = description;
   if (modalTech) modalTech.textContent = technologies;
   if (modalLink) modalLink.href = link;
   if (modalImage) modalImage.src = imageSrc;
 
-  // Modal ko show karna
   if (modal) {
+    // accessibility: save focus, show modal, trap focus
     modal.classList.add("active");
-    document.body.style.overflow = "hidden"; // Background scroll disable
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = "hidden";
+    modal.dataset._previouslyFocused = document.activeElement?.id || '';
+    // focus first focusable element inside modal
+    const focusable = modal.querySelectorAll('a, button, input, textarea, [tabindex]:not([tabindex="-1"])');
+    (focusable[0] || modal).focus();
+    // trap tab inside modal
+    modal._trapHandler = function (e) {
+      if (e.key === 'Tab') {
+        const nodes = Array.from(focusable.length ? focusable : [modal]);
+        const first = nodes[0];
+        const last = nodes[nodes.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    modal.addEventListener('keydown', modal._trapHandler);
   }
 }
 
-// Project Modal ko close karne ka function
+/* --- Close the project modal and restore page scrolling --- */
 function closeProjectModal() {
   const modal = document.getElementById("projectModal");
-
   if (modal) {
     modal.classList.remove("active");
-    document.body.style.overflow = "auto"; // Background scroll enable
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = "auto";
+    // restore focus
+    try {
+      const prevId = modal.dataset._previouslyFocused;
+      if (prevId) { const prev = document.getElementById(prevId); prev?.focus(); }
+    } catch (e) { }
+    if (modal._trapHandler) {
+      modal.removeEventListener('keydown', modal._trapHandler);
+      delete modal._trapHandler;
+    }
   }
 }
 
-// Modal ke bahar click karne par close karna
-document.addEventListener("click", function (e) {
+/* --- Close project modal when clicking outside the content --- */
+document.addEventListener("click", (event) => {
   const modal = document.getElementById("projectModal");
-  if (modal && e.target === modal) {
+  if (modal && event.target === modal) {
     closeProjectModal();
   }
 });
 
-// Escape key press par modal close karna
-document.addEventListener("keydown", function (e) {
-  if (e.key === "Escape") {
+/* --- Close modal when pressing Escape --- */
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
     closeProjectModal();
   }
 });
 
-//===========================================
-// 9.1 ADVANCED FORM VALIDATION & SUBMISSION
-//===========================================
-const contactForm = document.querySelector(".contact-form");
-const contactFormId = document.getElementById("contactForm");
-
-if (contactForm) {
-  // Real-time validation on input
-  const inputs = contactForm.querySelectorAll(".form-control, textarea");
-
-  inputs.forEach((input) => {
-    input.addEventListener("blur", function () {
-      validateField(this);
-    });
-
-    input.addEventListener("input", function () {
-      if (this.classList.contains("is-invalid")) {
-        validateField(this);
-      }
-    });
-  });
-
-  // Character count for message
-  const messageField = document.getElementById("message");
-  if (messageField) {
-    messageField.addEventListener("input", function () {
-      const charCount = document.getElementById("charCount");
-      const length = this.value.length;
-      charCount.textContent = length;
-
-      // Warn if approaching limit
-      if (length > 400) {
-        document.querySelector(".char-count").classList.add("warning");
-      } else if (length > 500) {
-        document.querySelector(".char-count").classList.add("limit");
-        this.value = this.value.substring(0, 500);
-        charCount.textContent = "500";
-      } else {
-        document
-          .querySelector(".char-count")
-          .classList.remove("warning", "limit");
-      }
-    });
-  }
-
-  // Form submission
-  contactForm.addEventListener("submit", function (e) {
-    // Get form inputs
-    const name = document.getElementById("name");
-    const email = document.getElementById("email");
-    const subject = document.getElementById("subject");
-    const message = document.querySelector('textarea[name="message"]');
-
-    let isValid = true;
-
-    // Validate name
-    if (!name.value.trim()) {
-      showError(name, "Name is required");
-      isValid = false;
-    } else if (name.value.trim().length < 2) {
-      showError(name, "Name must be at least 2 characters");
-      isValid = false;
-    } else {
-      clearError(name);
-      markFieldValid(name);
-    }
-
-    // Validate email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.value)) {
-      showError(email, "Please enter a valid email");
-      isValid = false;
-    } else {
-      clearError(email);
-      markFieldValid(email);
-    }
-
-    // Validate subject
-    if (!subject.value.trim()) {
-      showError(subject, "Subject is required");
-      isValid = false;
-    } else if (subject.value.trim().length < 3) {
-      showError(subject, "Subject must be at least 3 characters");
-      isValid = false;
-    } else {
-      clearError(subject);
-      markFieldValid(subject);
-    }
-
-    // Validate message
-    if (!message.value.trim()) {
-      showError(message, "Message is required");
-      isValid = false;
-    } else if (message.value.trim().length < 10) {
-      showError(message, "Message must be at least 10 characters");
-      isValid = false;
-    } else {
-      clearError(message);
-      markFieldValid(message);
-    }
-
-    if (!isValid) {
-      e.preventDefault();
-    } else {
-      // Show loading state
-      const submitBtn = contactForm.querySelector(".btn-submit");
-      submitBtn.classList.add("loading");
-      submitBtn.disabled = true;
-    }
-  });
-}
-
-//===========================================
-// 9.2 Enhanced Field Validation Functions
-//===========================================
+/* --- Form field validation utilities --- */
 function validateField(input) {
   const value = input.value.trim();
   const fieldName = input.name;
-
   let isValid = false;
 
   switch (fieldName) {
@@ -438,13 +346,12 @@ function validateField(input) {
       if (!isValid) showError(input, "Name must be at least 2 characters");
       break;
     case "email":
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      isValid = emailRegex.test(value);
+      isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
       if (!isValid) showError(input, "Please enter a valid email");
       break;
     case "subject":
       isValid = value.length >= 3;
-      if (!isValid) showError(input, "Subject must be at least 3 characters");
+      if (!isValid) showError(input, "Subject must be at least 5 characters");
       break;
     case "message":
       isValid = value.length >= 10;
@@ -465,79 +372,32 @@ function validateField(input) {
 function markFieldValid(input) {
   input.classList.remove("is-invalid");
   input.classList.add("is-valid");
-  const errorMsg = input.parentElement.querySelector(".error-message");
-  if (errorMsg) {
-    errorMsg.remove();
-  }
+  input.parentElement.querySelector(".error-message")?.remove();
+  input.setAttribute('aria-invalid', 'false');
 }
 
 function showError(input, message) {
   const formGroup = input.parentElement;
   input.classList.add("is-invalid");
   input.classList.remove("is-valid");
+  input.setAttribute('aria-invalid', 'true');
 
   let errorMsg = formGroup.querySelector(".error-message");
   if (!errorMsg) {
     errorMsg = document.createElement("small");
-    errorMsg.classList.add("error-message", "d-block", "mt-2");
+    errorMsg.className = "error-message d-block mt-2";
     formGroup.appendChild(errorMsg);
   }
   errorMsg.textContent = message;
 }
 
 function clearError(input) {
-  const formGroup = input.parentElement;
   input.classList.remove("is-invalid");
-
-  const errorMsg = formGroup.querySelector(".error-message");
-  if (errorMsg) {
-    errorMsg.remove();
-  }
+  input.parentElement.querySelector(".error-message")?.remove();
+  input.setAttribute('aria-invalid', 'false');
 }
 
-//===========================================
-// 9.3 ENHANCED FORM SUCCESS MESSAGE WITH ANIMATIONS
-//===========================================
-const contactFormElement = document.querySelector(".contact-form");
-
-if (contactFormElement) {
-  contactFormElement.addEventListener("submit", function (e) {
-    const submitBtn = this.querySelector(".btn-submit");
-    const originalText = submitBtn.innerHTML;
-
-    // Add success state
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Sending...';
-    submitBtn.classList.add("loading");
-
-    // Listen for response (Web3Forms handles this)
-    // Show success message after submission
-    setTimeout(() => {
-      // Reset after 3 seconds (adjust based on your backend)
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalText;
-      submitBtn.classList.remove("loading");
-
-      // Show success notification
-      showSuccessNotification(
-        "Message sent successfully! I'll get back to you soon.",
-      );
-    }, 3000);
-  });
-
-  // If the browser restores the page from cache after going back, clear the form fields
-  window.addEventListener("pageshow", function (event) {
-    if (event.persisted) {
-      contactFormElement.reset();
-      const charCount = document.getElementById("charCount");
-      if (charCount) charCount.textContent = "0";
-    }
-  });
-}
-
-//===========================================
-// 9.4 SUCCESS NOTIFICATION SYSTEM
-//===========================================
+/* --- Show a success notification after contact form submission --- */
 function showSuccessNotification(message) {
   const notification = document.createElement("div");
   notification.className = "success-notification";
@@ -547,7 +407,6 @@ function showSuccessNotification(message) {
       <span>${message}</span>
     </div>
   `;
-
   notification.style.cssText = `
     position: fixed;
     top: 100px;
@@ -567,19 +426,13 @@ function showSuccessNotification(message) {
   `;
 
   document.body.appendChild(notification);
-
-  // Remove after 4 seconds
   setTimeout(() => {
     notification.style.animation = "slideOutRight 0.4s ease-out";
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.parentNode.removeChild(notification);
-      }
-    }, 400);
+    setTimeout(() => notification.remove(), 400);
   }, 4000);
 }
 
-// Error notification function
+/* --- Show an error notification if the form cannot be submitted --- */
 function showErrorNotification(message) {
   const notification = document.createElement("div");
   notification.className = "error-notification";
@@ -589,7 +442,6 @@ function showErrorNotification(message) {
       <span>${message}</span>
     </div>
   `;
-
   notification.style.cssText = `
     position: fixed;
     top: 100px;
@@ -609,216 +461,169 @@ function showErrorNotification(message) {
   `;
 
   document.body.appendChild(notification);
-
-  // Remove after 4 seconds
   setTimeout(() => {
     notification.style.animation = "slideOutRight 0.4s ease-out";
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.parentNode.removeChild(notification);
-      }
-    }, 400);
+    setTimeout(() => notification.remove(), 400);
   }, 4000);
 }
 
-// ============================================================
-// 10. FOOTER SECTION FUNCTIONS
-// ============================================================
-
-// Load saved theme and refresh animations on page load
-window.addEventListener("load", () => {
-  const saved = localStorage.getItem("theme");
-  if (saved === "light") {
-    body.classList.add("light-mode");
-  }
-
-  // Refresh AOS animations
-  if (window.AOS) {
-    AOS.refresh();
-  }
-
-  document.body.style.opacity = "1";
-});
-
-//===========================================
-// INITIALIZE AOS (Animate On Scroll)
-//===========================================
-document.addEventListener("DOMContentLoaded", function () {
-  AOS.init({
-    duration: 1000,
-    easing: "ease-in-out",
-    once: false,
-    offset: 100,
+/* --- Initialize contact form events and validation --- */
+if (contactForm) {
+  const inputs = contactForm.querySelectorAll(".form-control, textarea");
+  inputs.forEach((input) => {
+    input.addEventListener("blur", () => validateField(input));
+    input.addEventListener("input", () => {
+      if (input.classList.contains("is-invalid")) {
+        validateField(input);
+      }
+    });
   });
-});
 
-//===========================================
-// MOUSE SPOTLIGHT GLOW EFFECT
-//===========================================
-document.addEventListener("mousemove", (e) => {
-  document.body.style.setProperty("--x", e.clientX + "px");
-  document.body.style.setProperty("--y", e.clientY + "px");
-});
+  const messageField = document.getElementById("message");
+  if (messageField) {
+    messageField.addEventListener("input", () => {
+      const charCount = document.getElementById("charCount");
+      const length = messageField.value.length;
+      if (charCount) charCount.textContent = String(length);
 
-// Glow effect ka div body mein add karna
-const glowDiv = document.createElement("div");
-glowDiv.classList.add("mouse-glow");
-document.body.appendChild(glowDiv);
+      const countWrapper = document.querySelector(".char-count");
+      if (length > 500) {
+        messageField.value = messageField.value.substring(0, 500);
+        if (charCount) charCount.textContent = "500";
+        countWrapper?.classList.add("limit");
+      } else if (length > 400) {
+        countWrapper?.classList.add("warning");
+        countWrapper?.classList.remove("limit");
+      } else {
+        countWrapper?.classList.remove("warning", "limit");
+      }
+    });
+  }
 
-//===========================================
-// SMOOTH SCROLL SPY - Highlight Active Section
-//===========================================
+  contactForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const name = document.getElementById("name");
+    const email = document.getElementById("email");
+    const subject = document.getElementById("subject");
+    const message = document.querySelector('textarea[name="message"]');
+    let isValid = true;
+
+    if (name && !validateField(name)) isValid = false;
+    if (email && !validateField(email)) isValid = false;
+    if (subject && !validateField(subject)) isValid = false;
+    if (message && !validateField(message)) isValid = false;
+
+    if (!isValid) {
+      showErrorNotification("Please fix the highlighted fields before submitting.");
+      return;
+    }
+
+    const submitBtn = contactForm.querySelector(".btn-submit");
+    if (submitBtn) {
+      submitBtn.classList.add("loading");
+      submitBtn.disabled = true;
+    }
+
+    try {
+      const formData = new FormData(contactForm);
+      const resp = await fetch(contactForm.action || window.location.href, {
+        method: contactForm.method || 'POST',
+        body: formData,
+      });
+
+      if (resp.ok) {
+        showSuccessNotification("Message sent successfully! I'll get back to you soon.");
+        contactForm.reset();
+        const charCount = document.getElementById("charCount");
+        if (charCount) charCount.textContent = "0";
+      } else {
+        showErrorNotification("There was a problem sending your message. Please try again later.");
+      }
+    } catch (err) {
+      console.error(err);
+      showErrorNotification("Network error. Please check your connection and try again.");
+    } finally {
+      if (submitBtn) {
+        submitBtn.classList.remove("loading");
+        submitBtn.disabled = false;
+      }
+    }
+  });
+
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) {
+      contactForm.reset();
+      const charCount = document.getElementById("charCount");
+      if (charCount) charCount.textContent = "0";
+    }
+  });
+}
+
+/* --- Highlight the current section link in the navigation --- */
 function updateActiveNav() {
   const sections = document.querySelectorAll("section");
   const navLinks = document.querySelectorAll(".nav-link");
-
-  window.addEventListener("scroll", () => {
+  const computeActive = () => {
     let currentSection = "";
-
     sections.forEach((section) => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-
-      if (scrollY >= sectionTop - 200) {
-        currentSection = section.getAttribute("id");
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= 200 && rect.bottom > 200) {
+        currentSection = section.getAttribute("id") || "";
       }
     });
 
     navLinks.forEach((link) => {
-      link.classList.remove("active");
-      if (link.getAttribute("href") === "#" + currentSection) {
-        link.classList.add("active");
-      }
+      link.classList.toggle("active", link.getAttribute("href") === `#${currentSection}`);
     });
-  });
+  };
+
+  ScrollManager.add(computeActive);
 }
 
-updateActiveNav();
-
-//===========================================
-// BACK TO TOP BUTTON
-//===========================================
+/* --- Back to top button visibility and click behavior --- */
 const backToTopBtn = document.querySelector(".back-to-top");
-
 if (backToTopBtn) {
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 500) {
-      backToTopBtn.classList.add("active");
-    } else {
-      backToTopBtn.classList.remove("active");
-    }
-  });
-
-  backToTopBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+  const handleBackToTop = () => backToTopBtn.classList.toggle("active", window.scrollY > 500);
+  ScrollManager.add(handleBackToTop);
+  backToTopBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
-//=========================================
-// skill bar animation
-//=========================================
 
-document.addEventListener("DOMContentLoaded", () => {
-  const skillBars = document.querySelectorAll(".skill-bar");
-
-  skillBars.forEach((bar) => {
-    const width = bar.getAttribute("data-width");
-    bar.style.width = width + "%";
-  });
-});
-
-window.addEventListener("scroll", () => {
-  const section = document.querySelector("#skills");
-  const position = section.getBoundingClientRect().top;
-  const screenHeight = window.innerHeight;
-
-  if (position < screenHeight) {
-    document.querySelectorAll(".skill-bar").forEach((bar) => {
-      const width = bar.getAttribute("data-width");
-      bar.style.width = width + "%";
-    });
-  }
-});
-
-//===========================================
-// whatsapp connect
-//===========================================
-// const message = encodeURIComponent("Hi Mureed Sajjad, Just connected with you through your link. How are you?");
-// const link = "https://wa.me/923437543272?text=" + message;
-
-// document.querySelector(".social-link").href = link;
-
-//===========================================
-// RESPONSIVE HEADER BEHAVIOR
-//===========================================
-let lastScrollTop = 0;
-const header = document.querySelector("#header");
-
-window.addEventListener("scroll", function () {
-  let scrollTop = window.scrollY || document.documentElement.scrollTop;
-
-  // You can add header hide/show on scroll here if needed
-  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-});
-
-// Page fade in effect (CSS handles most of this via fadeInPage animation)
-document.body.style.opacity = "0";
-document.body.style.transition = "opacity 0.6s ease-in";
-setTimeout(() => {
-  document.body.style.opacity = "1";
-}, 100);
-
-//===========================================
-// PARALLAX SCROLL EFFECT
-//===========================================
+/* --- Initialize parallax transform for elements with data-parallax --- */
 function initParallax() {
-  const parallaxElements = document.querySelectorAll("[data-parallax]");
-
-  parallaxElements.forEach((el) => {
-    window.addEventListener("scroll", () => {
-      const scrollPosition = window.scrollY;
+  const parallaxElements = Array.from(document.querySelectorAll("[data-parallax]"));
+  if (parallaxElements.length === 0) return;
+  const parallaxUpdate = () => {
+    const scrollPosition = window.scrollY;
+    parallaxElements.forEach((el) => {
       const elementOffset = el.offsetTop;
       const distance = scrollPosition - elementOffset;
-
-      // Only apply parallax if element is in viewport
       if (Math.abs(distance) < window.innerHeight) {
         el.style.transform = `translateY(${distance * 0.5}px)`;
       }
     });
-  });
+  };
+  ScrollManager.add(parallaxUpdate);
 }
 
-initParallax();
-
-//===========================================
-// SMOOTH SCROLL WITH OFFSET
-//===========================================
+/* --- Smooth anchor scrolling with header offset --- */
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-  anchor.addEventListener("click", function (e) {
+  anchor.addEventListener("click", function (event) {
     const href = this.getAttribute("href");
     if (href !== "#") {
-      e.preventDefault();
-
+      event.preventDefault();
       const target = document.querySelector(href);
       if (target) {
         const headerHeight = 120;
-        const targetPosition = target.offsetTop - headerHeight;
-
-        window.scrollTo({
-          top: targetPosition,
-          behavior: "smooth",
-        });
+        window.scrollTo({ top: target.offsetTop - headerHeight, behavior: "smooth" });
       }
     }
   });
 });
 
-//===========================================
-// LAZY LOADING IMAGES
-//===========================================
+/* --- Lazy load images that use data-src --- */
 const imageObserver = new IntersectionObserver((entries, observer) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
@@ -829,29 +634,52 @@ const imageObserver = new IntersectionObserver((entries, observer) => {
     }
   });
 });
-
 document.querySelectorAll("img[data-src]").forEach((img) => {
   imageObserver.observe(img);
 });
 
-//===========================================
-// SOCIAL LINKS ANIMATION
-//===========================================
+/* --- Animated hover effect for social icons --- */
 function initSocialLinks() {
   const socialLinks = document.querySelectorAll(
     'a[href*="github"], a[href*="linkedin"], a[href*="twitter"], a[href*="facebook"]',
   );
-
   socialLinks.forEach((link) => {
     link.addEventListener("mouseenter", () => {
       link.style.transform = "scale(1.2) rotate(10deg)";
       link.style.transition = "all 0.3s ease";
     });
-
     link.addEventListener("mouseleave", () => {
       link.style.transform = "scale(1) rotate(-10deg)";
     });
   });
 }
 
-initSocialLinks();
+/* --- DOMContentLoaded: initialize AOS, skill widths, and entrance animations --- */
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.AOS) {
+    AOS.init({ duration: 1000, easing: "ease-in-out", once: false, offset: 100 });
+  }
+  setSkillBarWidths();
+  animateSkillCards();
+  createCounterAnimation();
+  updateActiveNav();
+  initParallax();
+  initSocialLinks();
+  // attach accessible modal close handler
+  const modalCloseBtn = document.querySelector('.project-modal-close');
+  if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeProjectModal);
+  // mark required contact form fields for assistive tech
+  document.querySelectorAll('.contact-form [required]').forEach(el => el.setAttribute('aria-required', 'true'));
+});
+
+/* --- Ensure skill bars update when skills section becomes visible (via ScrollManager) --- */
+const checkSkillsVisible = () => {
+  const skillsSection = document.querySelector("#skills");
+  if (skillsSection) {
+    const position = skillsSection.getBoundingClientRect().top;
+    if (position < window.innerHeight) {
+      setSkillBarWidths();
+    }
+  }
+};
+ScrollManager.add(checkSkillsVisible);

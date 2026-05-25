@@ -1,6 +1,4 @@
-/* ==========================================================
-   1. GLOBAL VARIABLES & THEMES - CSS Variables for colors and themes
-   ========================================================== */
+/* Theme variables: site colors and background styles are defined here */
 :root {
   --bg-body: #0f172a;
   --bg-header: rgba(15, 23, 42, 0.8);
@@ -12,7 +10,7 @@
   --glow-color: rgba(56, 189, 248, 0.15);
 }
 
-/* Dark Mode Theme */
+/* Dark mode theme settings: these colors apply when dark mode is active */
 body.dark-mode {
   --bg-body: #0a0e27;
   --bg-header: #0a0e27;
@@ -23,7 +21,7 @@ body.dark-mode {
   --glow-color: rgba(96, 165, 250, 0.2);
 }
 
-/* Light Mode Theme */
+/* Light mode theme settings: these colors apply when light mode is active */
 body.light-mode {
   --bg-body: #f8f9fa;
   --bg-header: rgba(255, 255, 255, 0.8);
@@ -34,7 +32,6 @@ body.light-mode {
   --glow-color: rgba(0, 102, 204, 0.261);
 }
 
-/* Light Mode Specific Styles */
 body.light-mode .portfolio-item,
 body.light-mode .skill-card,
 body.light-mode .info-box,
@@ -69,6 +66,7 @@ body.light-mode .btn-outline-primary:hover {
   color: #ffffff !important;
 }
 
+/* Buttons style: primary and outline button colors, borders, and hover effects */
 .btn-primary,
 .btn-outline-primary {
   background-color: var(--bg-body) !important;
@@ -101,136 +99,90 @@ body.light-mode .btn-outline-primary:hover {
   transform: translateX(4px);
 }
 
-/* Professional GitHub Button - Modern, sleek design with hover effects */
+/* GitHub button style: professional design with hover shine and glow animation */
 .btn-github-professional {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   padding: 12px 24px;
-  /* Comfortable padding */
   background: linear-gradient(135deg, #24292e 0%, #1a1e22 100%);
-  /* GitHub dark gradient */
   color: #ffffff;
-  /* White text */
   text-decoration: none;
-  /* Remove underline */
   border: 2px solid #24292e;
-  /* Dark border */
   border-radius: 12px;
-  /* Rounded corners */
   font-weight: 600;
-  /* Semi-bold font */
   font-size: 0.95rem;
-  /* Slightly smaller font */
   letter-spacing: 0.5px;
-  /* Slight letter spacing */
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  /* Smooth transitions */
   position: relative;
-  /* For pseudo-elements */
   overflow: hidden;
-  /* Hide overflow for animations */
   box-shadow: 0 4px 15px rgba(36, 41, 46, 0.3);
-  /* Subtle shadow */
   backdrop-filter: blur(10px);
-  /* Blur effect */
   animation: gentlePulse 2s infinite;
-  /* Subtle pulse animation */
 }
 
 .btn-github-professional::before {
   content: '';
-  /* Pseudo-element for background animation */
   position: absolute;
-  /* Absolute positioning */
   top: 0;
   left: -100%;
-  /* Start from left */
   width: 100%;
-  /* Full width */
   height: 100%;
-  /* Full height */
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  /* Shine effect */
   transition: left 0.6s ease;
-  /* Smooth slide animation */
 }
 
 .btn-github-professional::after {
   content: '';
-  /* Pseudo-element for border glow */
   position: absolute;
-  /* Absolute positioning */
   top: -2px;
   left: -2px;
   right: -2px;
   bottom: -2px;
   background: linear-gradient(45deg, #24292e, #0366d6, #24292e);
-  /* Border gradient */
   border-radius: 14px;
-  /* Slightly larger radius */
   z-index: -1;
-  /* Behind main button */
   opacity: 0;
-  /* Initially hidden */
   transition: opacity 0.4s ease;
-  /* Smooth opacity transition */
 }
 
 .btn-github-professional:hover {
   background: linear-gradient(135deg, #1a1e22 0%, #24292e 100%);
-  /* Reverse gradient on hover */
   border-color: #0366d6;
-  /* GitHub blue border */
   transform: translateY(-2px) scale(1.02);
-  /* Lift and slight scale effect */
   box-shadow: 0 8px 25px rgba(3, 102, 214, 0.4);
-  /* Enhanced shadow with blue tint */
   color: #ffffff;
-  /* Ensure text stays white */
   animation: none;
-  /* Stop pulse on hover */
 }
 
 .btn-github-professional:hover::before {
   left: 100%;
-  /* Slide shine effect to right */
 }
 
 .btn-github-professional:hover::after {
   opacity: 1;
-  /* Show border glow on hover */
 }
 
 .btn-github-professional i {
   font-size: 1.1rem;
-  /* Icon size */
   transition: transform 0.3s ease;
-  /* Smooth icon animation */
   z-index: 1;
-  /* Above pseudo-elements */
 }
 
 .btn-github-professional:hover i {
   transform: scale(1.1) rotate(5deg);
-  /* Scale and rotate icon on hover */
 }
 
 .btn-github-professional span {
   font-weight: 600;
-  /* Bold text */
   transition: all 0.3s ease;
-  /* Smooth text transitions */
   z-index: 1;
-  /* Above pseudo-elements */
 }
 
 .btn-github-professional:hover span {
   color: #ffffff;
-  /* Ensure text stays white */
 }
 
-/* Subtle pulse animation for attention */
 @keyframes gentlePulse {
 
   0%,
@@ -243,62 +195,41 @@ body.light-mode .btn-outline-primary:hover {
   }
 }
 
-/* Focus state for accessibility */
 .btn-github-professional:focus {
   outline: none;
-  /* Remove default outline */
   box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.5);
-  /* Blue focus ring */
 }
 
-/* Active state for button press */
 .btn-github-professional:active {
   transform: translateY(0) scale(0.98);
-  /* Slight press effect */
   transition: transform 0.1s ease;
-  /* Quick transition */
 }
 
-/* Light mode adjustments for GitHub button */
 body.light-mode .btn-github-professional {
   background: linear-gradient(135deg, #ffffff 0%, #f6f8fa 100%);
-  /* Light gradient */
   color: #24292e;
-  /* Dark text */
   border-color: #d1d5db;
-  /* Light border */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  /* Subtle shadow */
 }
 
 body.light-mode .btn-github-professional:hover {
   background: linear-gradient(135deg, #f6f8fa 0%, #ffffff 100%);
-  /* Reverse light gradient */
   border-color: #0366d6;
-  /* GitHub blue border */
   box-shadow: 0 8px 25px rgba(3, 102, 214, 0.2);
-  /* Blue shadow */
   color: #24292e;
-  /* Keep dark text */
 }
 
-/* Mobile responsive for GitHub button */
 @media (max-width: 768px) {
   .btn-github-professional {
     padding: 10px 20px;
-    /* Smaller padding on mobile */
     font-size: 0.9rem;
-    /* Smaller font on mobile */
     gap: 8px;
-    /* Smaller gap on mobile */
   }
 
   .btn-github-professional i {
     font-size: 1rem;
-    /* Smaller icon on mobile */
   }
 }
-
 
 html,
 body {
@@ -307,62 +238,44 @@ body {
   position: relative;
 }
 
-
-/* ==========================================================
-   2. GLOBAL STYLES & RESET - Basic styling and CSS reset
-   ========================================================== */
-
-/* Basic Reset - Removes default browser margins and padding */
 body {
   background-color: var(--bg-body);
-  /* Sets background color using CSS variable */
   color: var(--text-main);
-  /* Sets text color using CSS variable */
   font-family: 'Inter', sans-serif;
-  /* Sets primary font family */
   overflow-x: hidden;
-  /* Prevents horizontal scrolling */
   scroll-behavior: smooth;
-  /* Enables smooth scrolling */
   transition: background-color 0.5s ease, color 0.5s ease;
-  /* Smooth theme transitions */
   animation: fadeInPage 0.6s ease-out;
-  /* Page fade-in animation */
 }
 
-/* Mouse Spotlight Effect - Creates glowing cursor effect */
+/* Mouse glow effect: creates a subtle light glow around the cursor */
 .mouse-glow {
   position: fixed;
-  /* Fixed position relative to viewport */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  /* Doesn't interfere with mouse events */
   background: radial-gradient(300px circle at var(--x) var(--y), var(--glow-color), transparent 80%);
-  /* Radial gradient following mouse */
   z-index: 9999;
-  /* High z-index to appear above content */
 }
 
-/* Universal Reset - Applies box-sizing and font-family to all elements */
+/* Universal reset: removes default margin/padding and sets box-sizing */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  /* Includes padding and border in width/height calculations */
   font-family: Poppins, sans-serif;
-  /* Secondary font family */
 }
 
-/* Section Common Styling */
+/* Section layout: section spacing, border radius, and transition settings */
 section {
   scroll-margin-top: 110px;
   border-radius: 10px;
   transition: all 0.4s ease;
 }
 
+/* Heading styles: bright section titles with an underline animation */
 h2 {
   color: var(--text-bright);
   font-weight: 700;
@@ -385,11 +298,7 @@ h2::after {
   animation: slideInDown 0.6s ease-out;
 }
 
-/* ==========================================================
-   3. HEADER / NAVIGATION SECTION - Fixed header with navigation
-   ========================================================== */
-
-/* Logo Styling - Brand name/logo in header */
+/* Header logo: style and color for the brand name in the header */
 .logo a {
   font-size: clamp(18px, 5vw, 40px);
   font-weight: 800;
@@ -399,40 +308,29 @@ h2::after {
   text-transform: uppercase;
 }
 
-/* Logo span color - Special color for part of logo */
 .logo span {
   color: #00f2ff;
 }
 
-/* Main Header Container - Fixed header at top of page */
+/* Header area: fixed top navigation with glassy background styling */
 .header {
   position: fixed;
-  /* Fixed position at top of viewport */
   top: 0;
   left: 0;
   width: 100%;
-  /* Full width */
   padding: 15px 0;
-  /* Vertical padding */
   z-index: 1000;
-  /* High z-index to stay above content */
   transition: all 0.4s ease;
-  /* Smooth transitions */
   background: var(--bg-header);
-  /* Semi-transparent background */
   backdrop-filter: blur(15px);
-  /* Blur effect behind header */
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  /* Subtle border */
   overflow: visible !important;
-  /* Ensures content doesn't get cut off */
 }
 
-/* Jab page scroll ho to header ka rang thora dark ho jaye */
+/* Header scroll state: header becomes compact and stable when scrolling */
 .header.scrolled {
   background: var(--bg-header);
   padding: 10px 0;
-  /* backdrop-filter: blur(20px); */
 }
 
 .header::before {
@@ -447,6 +345,7 @@ h2::after {
   pointer-events: none;
 }
 
+/* Header hover effect: a subtle rainbow shine slides across the header */
 .header:hover::before {
   left: 100%;
 }
@@ -457,6 +356,7 @@ h2::after {
   transition: all 0.3s ease;
 }
 
+/* Navigation layout: arranges logo, menu, and action buttons in a row */
 .nav-container {
   max-width: 1300px;
   margin: 0 auto;
@@ -466,10 +366,11 @@ h2::after {
   padding: 0 30px;
 }
 
-
+/* Navbar links: spacing, hover, and active styles for top menu items */
 .no-scroll {
   overflow: hidden;
 }
+
 .navbar-menu ul {
   display: flex;
   list-style: none;
@@ -479,7 +380,6 @@ h2::after {
 }
 
 .nav-link {
-  /* color: var(--text-main); */
   text-decoration: none;
   font-size: 15px;
   font-weight: 500;
@@ -488,7 +388,7 @@ h2::after {
   transition: 0.3s;
 }
 
-/* Hover aur Active state ka style */
+/* Navbar link hover: bright hover and active effect for menu items */
 .nav-link:hover,
 .nav-link.active {
   color: #000;
@@ -503,6 +403,7 @@ nav ul {
   gap: 20px;
 }
 
+/* Header action buttons: layout for dark mode toggle and mobile menu toggle */
 nav li {
   display: inline;
 }
@@ -530,13 +431,13 @@ nav li {
   text-decoration: none;
 }
 
+/* Header buttons: round shape and hover effect for header controls */
 #darkToggle:hover {
   background: #03f6f6;
   color: #000;
   transform: translateY(-3px);
 }
 
-/* Mobile menu button desktop par chupa rahega */
 #menuBtn {
   display: none;
 }
@@ -559,89 +460,53 @@ nav li {
   border-bottom: 5px solid transparent;
 }
 
-/* ==========================================================
-   4. HERO SECTION (HOME) - Main landing section with intro and profile
-   ========================================================== */
-
-/* Main Content Container - Contains all page content except header */
+/* Main layout: base layout and background for the main content area */
 #main {
   margin-left: 0 !important;
-  /* Removes any left margin */
   margin-top: 80px;
-  /* Space for fixed header */
   padding: 0;
-  /* No padding */
   transition: all 0.4s ease;
-  /* Smooth transitions */
   background: linear-gradient(135deg, transparent 0%, rgba(56, 189, 248, 0.02) 100%);
-  /* Subtle gradient background */
   min-height: 100vh;
-  /* Full viewport height */
 }
 
-/* Hero Section Container - Main landing area */
+/* Hero section: landing area with centered content and background effect */
 .hero-section {
   position: relative;
-  /* Relative positioning for child elements */
   min-height: 100vh;
-  /* Full viewport height */
   display: flex;
-  /* Flexbox layout */
   align-items: center;
-  /* Center content vertically */
   justify-content: center;
-  /* Center content horizontally */
   padding: 100px 50px 80px;
-  /* Padding: top, sides, bottom */
   overflow: hidden;
-  /* Hide overflowing content */
 }
 
-/* Hero Content Grid - Two-column layout for content and profile */
+/* Hero content grid: arranges intro and profile side by side */
 .hero-container {
   min-height: 100vh;
-  /* Full viewport height */
   display: grid;
-  /* CSS Grid layout */
   justify-content: center;
-  /* Center grid horizontally */
   grid-template-columns: 1fr 1fr;
-  /* Two equal columns */
   gap: 60px;
-  /* Gap between columns */
   align-items: center;
-  /* Center items vertically */
   max-width: 1400px;
-  /* Maximum width */
   width: 100%;
-  /* Full width within max-width */
   margin: 0 auto;
-  /* Center horizontally */
 }
 
-/* Hero Badge - Small label/tag above title */
+/* Hero badge: small label above the greeting text */
 .hero-badge {
   color: var(--primary-color);
-  /* Primary color text */
   font-weight: 700;
-  /* Bold font weight */
   font-size: 0.85rem;
-  /* Small font size */
   letter-spacing: 2px;
-  /* Wide letter spacing */
   text-transform: uppercase;
-  /* Uppercase text */
   padding: 5px 15px;
-  /* Padding around text */
   border: 1px solid rgba(56, 189, 248, 0.3);
-  /* Semi-transparent border */
   border-radius: 20px;
-  /* Rounded corners */
   background: rgba(56, 189, 248, 0.08);
-  /* Semi-transparent background */
 }
 
-/* Hero Title - Main heading */
 .hero-title {
   font-size: clamp(2.5rem, 8vw, 4.5rem);
   font-weight: 900;
@@ -652,13 +517,13 @@ nav li {
   letter-spacing: -2px;
 }
 
+/* Hero highlight: styling for the highlighted name inside the hero title */
 .hero-highlight {
   color: var(--primary-color);
   display: block;
   text-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
 }
 
-/* Hero Subtitle & Description */
 .hero-subtitle {
   font-size: 1.5rem;
   color: var(--text-main);
@@ -675,12 +540,13 @@ nav li {
   max-width: 500px;
 }
 
+/* Hero description: introduction text with highlight styling for strong words */
 .hero-description strong {
   color: var(--primary-color);
   font-weight: 600;
 }
 
-/* Hero Buttons */
+/* Hero buttons: layout and hover effects for call-to-action buttons */
 .hero-buttons {
   display: flex;
   gap: 20px;
@@ -727,7 +593,6 @@ nav li {
   box-shadow: 0 10px 30px rgba(56, 189, 248, 0.2);
 }
 
-/* Hero Profile Section */
 .hero-profile {
   position: relative;
   display: flex;
@@ -740,10 +605,6 @@ nav li {
   width: 400px;
   height: 400px;
   animation: fadeIn 0.8s ease-out;
-
-  /* max-width: 100%;
-  width: 300px;
-  height: auto; */
 }
 
 .profile-glow {
@@ -772,7 +633,6 @@ nav li {
   animation: floatUp 3s ease-in-out infinite;
 }
 
-/* Scroll Indicator */
 .scroll-indicator {
   position: absolute;
   bottom: 30px;
@@ -783,9 +643,6 @@ nav li {
   align-items: center;
   gap: 10px;
   animation: fadeIn 0.8s ease-out 0.8s backwards;
-
-  /* extra  */
-
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -818,11 +675,7 @@ nav li {
   color: var(--primary-color);
 }
 
-/* ==========================================================
-   5. ABOUT SECTION
-   ========================================================== */
-
-/* About Image Animation */
+/* About section: image animation and hover style */
 .about-image {
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   animation: zoomIn 0.6s ease-out;
@@ -831,17 +684,7 @@ nav li {
   box-shadow: 0 10px 30px rgba(56, 189, 248, 0.1);
 }
 
-.about-image:hover {
-  transform: scale(1.05) rotate(2deg);
-  box-shadow: 0 20px 50px rgba(56, 189, 248, 0.3);
-  border-color: var(--primary-color);
-}
-
-/* ==========================================================
-   6. SERVICES SECTION
-   ========================================================== */
-
-/* Info Box Styling */
+/* About info boxes: card style and hover transform */
 .info-box {
   background: linear-gradient(135deg, var(--card-bg) 0%, rgba(56, 189, 248, 0.08) 100%);
   border: 2px solid rgba(56, 189, 248, 0.2);
@@ -876,10 +719,7 @@ nav li {
   transform: scale(1.2) rotate(10deg);
 }
 
-/* ==========================================================
-   7. SKILLS PROGRESS BARS SECTION
-   ========================================================== */
-
+/* Skills section: progress bar containers and labels */
 .skill-progress-item {
   margin-bottom: 30px;
 }
@@ -917,11 +757,7 @@ nav li {
   transition: width 1.5s ease-in-out;
 }
 
-/* ==========================================================
-   8. CERTIFICATIONS SECTION
-   ========================================================== */
-
-/* Institute Box */
+/* Certification cards: institute boxes and hover effects */
 .institute-box {
   background: linear-gradient(135deg, var(--card-bg) 0%, rgba(56, 189, 248, 0.08) 100%) !important;
   border: 2px solid rgba(56, 189, 248, 0.3) !important;
@@ -948,40 +784,25 @@ nav li {
 
 .institute-box p {
   color: var(--text-main);
-
 }
 
 .institute-box:hover p {
   color: var(--text-bright);
 }
 
-/* ==========================================================
-   9. STATISTICS/COUNTER SECTION
-   ========================================================== */
-
-/* =========================
-   STAT BOX - MODERN GLOW UI
-   ========================= */
-/* =========================
-   STAT BOX - UPGRADED GLOW
-   ========================= */
-
+/* Stats section: animated statistic cards */
 .stat-box {
   position: relative;
   padding: 40px 20px;
   border-radius: 15px;
-
   background: linear-gradient(135deg, var(--card-bg), rgba(56, 189, 248, 0.08));
   backdrop-filter: blur(10px);
-
   border: 2px solid rgba(56, 189, 248, 0.2);
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-
   overflow: hidden;
   z-index: 1;
 }
 
-/* 🔥 Neon Glow Border */
 .stat-box::before {
   content: "";
   position: absolute;
@@ -996,7 +817,6 @@ nav li {
   z-index: -1;
 }
 
-/* ✨ Shine Effect */
 .stat-box::after {
   content: "";
   position: absolute;
@@ -1011,30 +831,22 @@ nav li {
   transition: 0.6s;
 }
 
-/* 🚀 Hover */
-.stat-box:hover {
+/* Project modal: hidden popup window for project details */
+.project-modal {
   transform: translateY(-12px) scale(1.03);
-
   border-color: var(--primary-color);
-
   box-shadow:
     0 20px 50px rgba(56, 189, 248, 0.25),
     0 0 40px rgba(56, 189, 248, 0.3);
 }
 
-/* Glow active */
 .stat-box:hover::before {
   opacity: 1;
 }
 
-/* Shine run */
 .stat-box:hover::after {
   left: 120%;
 }
-
-/* =========================
-   TEXT ENHANCEMENT
-   ========================= */
 
 .stat-number {
   font-size: 3rem;
@@ -1044,13 +856,11 @@ nav li {
   transition: 0.4s;
 }
 
-/* 🔥 Number Glow */
 .stat-box:hover .stat-number {
   color: var(--text-bright);
   text-shadow: 0 0 20px var(--primary-color);
 }
 
-/* Label */
 .stat-label {
   font-size: 1.1rem;
   color: var(--text-main);
@@ -1063,11 +873,7 @@ nav li {
   color: var(--text-bright);
 }
 
-/* ==========================================================
-   10. PROJECTS SECTION
-   ========================================================== */
-
-/* Portfolio Cards */
+/* Portfolio cards: base style and hover effects for project cards */
 .portfolio-item {
   background: var(--bg-body);
   border: 5px solid rgba(255, 255, 255, 0.1);
@@ -1076,7 +882,6 @@ nav li {
   overflow: hidden;
 }
 
-/* Enhanced Portfolio Cards - Using ::before pseudo-element for shine effect */
 .portfolio-item::before {
   content: '';
   position: absolute;
@@ -1104,7 +909,6 @@ nav li {
   filter: brightness(1.1);
 }
 
-/* Blur Effect on Container Hover */
 .portfolio-container:hover .portfolio-item {
   opacity: 0.5;
   filter: blur(3px);
@@ -1127,11 +931,6 @@ nav li {
   background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(56, 189, 248, 0.3));
 }
 
-/* ==========================================
-   PORTFOLIO TEXT - PERFECT MODERN MATCH
-   ========================================== */
-
-/* Title */
 .portfolio-item .card-body h5 {
   color: var(--text-bright);
   font-weight: 700;
@@ -1140,7 +939,6 @@ nav li {
   position: relative;
 }
 
-/* Sub text */
 .portfolio-item .card-body .text-muted {
   color: var(--text-main) !important;
   font-size: 0.85rem;
@@ -1172,7 +970,6 @@ nav li {
   transform: translateX(8px) scale(1.1);
 }
 
-/* ✨ Modern underline animation */
 .portfolio-item .card-body h5::after {
   content: "";
   position: absolute;
@@ -1190,11 +987,6 @@ nav li {
   width: 50%;
 }
 
-
-/* ==========================================
-   NEXT LEVEL SKILL CARD (PRO UI)
-   ========================================== */
-
 .skill-card {
   background: linear-gradient(135deg, var(--card-bg), rgba(56, 189, 248, 0.05));
   border: 2px solid rgba(56, 189, 248, 0.2);
@@ -1206,7 +998,7 @@ nav li {
   transform-style: preserve-3d;
 }
 
-/* Neon border glow */
+/* Skill card glow: hover animation with 3D tilt and glowing border */
 .skill-card::after {
   content: "";
   position: absolute;
@@ -1218,7 +1010,6 @@ nav li {
   transition: 0.5s;
 }
 
-/* Shine effect */
 .skill-card::before {
   content: "";
   position: absolute;
@@ -1230,11 +1021,9 @@ nav li {
   transition: 0.6s;
 }
 
-/* Hover main magic */
 .skill-card:hover {
   transform: rotateX(8deg) rotateY(-8deg) scale(1.05);
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-
 }
 
 .skill-card:hover::before {
@@ -1245,7 +1034,6 @@ nav li {
   opacity: 1;
 }
 
-/* ICON animation */
 .skill-card i {
   font-size: 2.2rem;
   color: var(--primary-color);
@@ -1257,7 +1045,6 @@ nav li {
   transform: scale(1.3) rotate(10deg);
 }
 
-/* TEXT */
 .skill-card h5 {
   color: var(--text-bright);
   margin-bottom: 10px;
@@ -1277,11 +1064,6 @@ nav li {
   color: var(--header-text);
 }
 
-
-/* ==========================================
-   DIFFERENT COLORS PER CARD
-   ========================================== */
-
 .skill-1:hover {
   border-color: #00f2ff;
   box-shadow: 0 20px 50px rgba(0, 242, 255, 0.4);
@@ -1297,107 +1079,60 @@ nav li {
   box-shadow: 0 20px 50px rgba(0, 255, 136, 0.4);
 }
 
-
-
-/* ==========================================================
-   11. PROJECT MODAL - Popup modal for project details
-   ========================================================== */
-
-/* Modal Overlay - Dark background behind modal */
+/* Project modal: hidden popup window for project details */
 .project-modal {
   display: none;
-  /* Hidden by default */
   position: fixed;
-  /* Fixed position covers entire screen */
   z-index: 2000;
-  /* High z-index above other content */
   left: 0;
   top: 0;
   width: 100%;
-  /* Full width */
   height: 100%;
-  /* Full height */
   background: rgba(0, 0, 0, 0.8);
-  /* Dark semi-transparent background */
   backdrop-filter: blur(5px);
-  /* Blur effect on background */
   animation: fadeIn 0.3s ease-out;
-  /* Fade-in animation */
   overflow-y: auto;
-  /* Allow vertical scrolling if needed */
 }
 
-/* Active Modal State - Shows modal when active class is added */
+/* Project modal active state: center the modal in the viewport */
 .project-modal.active {
   display: flex;
-  /* Display as flexbox */
   align-items: center;
-  /* Center content vertically */
   justify-content: center;
-  /* Center content horizontally */
 }
 
-/* Modal Content Container - Main modal content area */
 .project-modal-content {
   background: linear-gradient(135deg, var(--card-bg) 0%, rgba(56, 189, 248, 0.08) 100%);
-  /* Gradient background */
   border: 2px solid rgba(56, 189, 248, 0.2);
-  /* Semi-transparent border */
   border-radius: 20px;
-  /* Rounded corners */
   padding: 40px;
-  /* Padding inside modal */
   max-width: 900px;
-  /* Maximum width */
   width: 90%;
-  /* Responsive width */
   max-height: 90vh;
-  /* Maximum height */
   overflow-y: auto;
-  /* Allow scrolling if content is tall */
   position: relative;
-  /* Relative positioning for close button */
   box-shadow: 0 25px 70px rgba(56, 189, 248, 0.3);
-  /* Glow shadow effect */
   scrollbar-color: var(--primary-color) transparent;
-  /* Custom scrollbar color */
   scrollbar-width: thin;
-  /* Thin scrollbar */
 }
 
-/* Modal Close Button - X button to close modal */
 .project-modal-close {
   position: absolute;
-  /* Absolute position in top-right */
   right: 25px;
-  /* Distance from right edge */
   top: 15px;
-  /* Distance from top edge */
   font-size: 28px;
-  /* Large font size */
   font-weight: bold;
-  /* Bold text */
   color: var(--primary-color);
-  /* Primary color */
   cursor: pointer;
-  /* Cursor changes to pointer */
   transition: all 0.3s ease;
-  /* Smooth transitions */
 }
 
-/* Close Button Hover Effect - Animation on hover */
 .project-modal-close:hover {
   transform: scale(1.2) rotate(90deg);
-  /* Scale up and rotate */
   color: var(--text-bright);
-  /* Change color */
 }
 
-
-/* ==========================================================
-   12. CONTACT SECTION
-   ========================================================== */
-
+/* Contact cards: background and hover styles for contact info boxes */
 .contact-card {
   background: linear-gradient(135deg, var(--card-bg) 0%, rgba(56, 189, 248, 0.08) 100%);
   border: 2px solid rgba(56, 189, 248, 0.2);
@@ -1455,9 +1190,10 @@ nav li {
 
 .contact-card a:hover {
   color: var(--text-bright);
-  text-decoration: underline;
+  text-decoration: none;
 }
 
+/* Contact form wrapper: background, border, and hover lift for the form */
 .contact-form-wrapper {
   background: linear-gradient(135deg, var(--card-bg) 0%, rgba(56, 189, 248, 0.08) 100%);
   border: 2px solid rgba(56, 189, 248, 0.2);
@@ -1479,7 +1215,6 @@ nav li {
   font-weight: 700;
   font-size: 1.8rem;
 }
-
 
 .contact-form {
   background: linear-gradient(135deg, var(--card-bg) 0%, rgba(56, 189, 248, 0.05) 100%);
@@ -1580,7 +1315,6 @@ nav li {
   transform: translateY(-2px);
 }
 
-/* Input Wrapper with Icons */
 .input-wrapper {
   position: relative;
   display: flex;
@@ -1623,7 +1357,6 @@ nav li {
   padding-right: 45px;
 }
 
-/* Character Count */
 .char-count {
   display: block;
   margin-top: 5px;
@@ -1640,7 +1373,6 @@ nav li {
   color: #ef4444;
 }
 
-/* Enhanced Contact Cards */
 .contact-card {
   position: relative;
   overflow: hidden;
@@ -1675,9 +1407,7 @@ nav li {
   color: var(--primary-color);
 }
 
-/* Contact Hint Text */
 .contact-hint {
-  /* color: rgba(245, 0, 0, 0.998); */
   font-size: 0.85rem;
   margin-top: 8px;
   font-style: italic;
@@ -1706,7 +1436,6 @@ nav li {
   width: 100%;
 }
 
-/* Social Contact Links */
 .social-contact-links {
   display: flex;
   justify-content: center;
@@ -1755,7 +1484,6 @@ nav li {
   left: 0;
 }
 
-/* Form Actions Container */
 .form-actions {
   display: flex;
   gap: 12px;
@@ -1767,7 +1495,6 @@ nav li {
   min-width: 150px;
 }
 
-/* Enhanced Icon Animations */
 .icon-phone {
   animation: float 3s ease-in-out infinite;
 }
@@ -1792,7 +1519,6 @@ nav li {
   }
 }
 
-/* Validation States */
 .form-control.is-invalid {
   border-color: #ef4444;
   background: rgba(239, 68, 68, 0.05);
@@ -1823,7 +1549,6 @@ nav li {
   font-weight: 500;
 }
 
-/* Loading State */
 .btn-submit.loading {
   opacity: 0.7;
   pointer-events: none;
@@ -1843,7 +1568,6 @@ nav li {
   }
 }
 
-/* Notification Animations */
 @keyframes slideInRight {
   from {
     transform: translateX(400px);
@@ -1868,7 +1592,6 @@ nav li {
   }
 }
 
-/* Responsive Contact */
 @media (max-width: 768px) {
   .contact-card {
     padding: 25px 15px;
@@ -1905,10 +1628,6 @@ nav li {
     font-size: 1rem;
   }
 }
-
-/* ==========================================================
-   13. FOOTER SECTION
-   ========================================================== */
 
 #footer {
   background: linear-gradient(135deg, var(--bg-header) 0%, rgba(56, 189, 248, 0.08) 100%);
@@ -2069,9 +1788,6 @@ body.dark-mode #footer a:hover {
   font-weight: 600;
 }
 
-
-
-/* Footer responsive */
 @media (max-width: 768px) {
   #footer {
     padding: 60px 0 30px;
@@ -2097,11 +1813,6 @@ body.dark-mode #footer a:hover {
   }
 }
 
-/* ==========================================================
-   14. ANIMATIONS & EFFECTS
-   ========================================================== */
-
-/* Keyframe Animations */
 @keyframes slideInDown {
   from {
     opacity: 0;
@@ -2208,7 +1919,6 @@ body.dark-mode #footer a:hover {
   }
 }
 
-/* Back to Top Button Animation */
 .back-to-top {
   position: fixed;
   bottom: 30px;
@@ -2237,7 +1947,6 @@ body.dark-mode #footer a:hover {
   box-shadow: 0 10px 30px rgba(56, 189, 248, 0.5);
 }
 
-/* Loading Animation */
 @keyframes fadeInPage {
   from {
     opacity: 0;
@@ -2250,21 +1959,14 @@ body.dark-mode #footer a:hover {
   }
 }
 
-/* Image Loaded State */
 img.loaded {
   animation: fadeIn 0.6s ease-out;
 }
 
-/* Parallax Element */
 [data-parallax] {
   will-change: transform;
 }
 
-/* ==========================================================
-   15. RESPONSIVE DESIGN - Mobile and tablet breakpoints
-   ========================================================== */
-
-/* Mobile Responsive - For screens smaller than 991px (tablets and phones) */
 @media (max-width: 991px) {
   .header {
     width: 100% !important;
@@ -2274,23 +1976,14 @@ img.loaded {
 
   #menuBtn {
     display: flex !important;
-    /* Show mobile menu toggle button */
     width: 45px !important;
-    /* Slightly larger for better touch */
     height: 45px !important;
-    /* Slightly larger for better touch */
     background: rgba(56, 189, 248, 0.1);
-    /* Subtle background */
     border: 1px solid rgba(56, 189, 248, 0.3);
-    /* Subtle border */
     border-radius: 10px;
-    /* Rounded corners */
     color: var(--primary-color);
-    /* Professional color */
     font-size: 20px;
-    /* Appropriate icon size */
     transition: all 0.3s ease;
-    /* Smooth transitions */
   }
 
   #menuBtn:hover {
@@ -2302,23 +1995,18 @@ img.loaded {
 
   .logo a {
     font-size: 20px;
-    /* Smaller, professional font size on mobile */
     font-weight: 700;
-    /* Maintain bold but not too heavy */
     letter-spacing: 0.5px;
-    /* Tighter letter spacing for mobile */
   }
 
   .logo span {
     color: #00f2ff;
-    /* Keep the accent color */
   }
 
   .nav-actions {
     display: flex;
     align-items: center;
     gap: 15px;
-    /* Professional spacing */
   }
 
   .navbar-menu {
@@ -2341,15 +2029,13 @@ img.loaded {
       filter 0.3s ease,
       opacity 0.3s ease;
     z-index: 999;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45)
-    inset 0 0 15px rgba(0, 255, 255, 0.08);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45) inset 0 0 15px rgba(0, 255, 255, 0.08);
   }
 
   .navbar-menu.active {
     top: 70px;
     opacity: 1;
   }
-
 
   .navbar-menu ul {
     display: flex;
@@ -2362,7 +2048,7 @@ img.loaded {
   }
 
   .navbar-menu .nav-link {
-    color:var(--text-bright);
+    color: var(--text-bright);
     text-decoration: none;
     font-size: 16px;
     font-weight: 500;
@@ -2384,43 +2070,29 @@ img.loaded {
     box-shadow: 0 10px 25px rgba(180, 17%, 95%, 0.448);
   }
 
-
   .social-icons a,
   #darkToggle {
     width: 42px;
-    /* Slightly larger for mobile touch */
     height: 42px;
-    /* Slightly larger for mobile touch */
     font-size: 18px;
-    /* Appropriate icon size */
     border-radius: 10px;
-    /* Rounded corners */
     background: rgba(56, 189, 248, 0.1);
-    /* Subtle background */
     border: 1px solid rgba(56, 189, 248, 0.2);
-    /* Subtle border */
     color: var(--primary-color);
-    /* Professional color */
     transition: all 0.3s ease;
-    /* Smooth transitions */
   }
 
   .social-icons a:hover,
   #darkToggle:hover {
     background: rgba(56, 189, 248, 0.2);
-    /* More prominent on hover */
     border-color: var(--primary-color);
-    /* Solid border on hover */
     transform: scale(1.05);
-    /* Subtle scale effect */
   }
 }
 
-/* Tablet and Smaller Screens */
 @media (max-width: 1199px) {
   #header {
     height: 70px;
-    /* padding: 10px 10px; */
     padding: auto;
   }
 
@@ -2430,16 +2102,12 @@ img.loaded {
 
   .logo a {
     font-size: 20px;
-    /* Smaller, professional font size on mobile */
     font-weight: 700;
-    /* Maintain bold but not too heavy */
     letter-spacing: 0.5px;
-    /* Tighter letter spacing for mobile */
   }
 
   .logo span {
     color: #00f2ff;
-    /* Keep the accent color */
   }
 
   .nav-link {
@@ -2458,7 +2126,6 @@ img.loaded {
 
   .hero-profile {
     order: -1;
-    /* Profile image comes first on mobile */
   }
 
   .profile-wrapper {
@@ -2485,7 +2152,6 @@ img.loaded {
   }
 }
 
-/* Small Screens */
 @media (max-width: 768px) {
   .progress {
     height: 10px;
@@ -2508,7 +2174,6 @@ img.loaded {
   }
 }
 
-/* Extra Small Screens */
 @media (max-width: 480px) {
   .stat-box {
     padding: 20px 10px;
@@ -2523,12 +2188,10 @@ img.loaded {
     width: 95%;
   }
 
-  /* Image responsiveness improvements */
   .about-image,
   .profile-image {
     max-width: 100% !important;
     height: auto !important;
-    /* width: 250px !important; */
     margin: 0 auto;
   }
 
@@ -2552,7 +2215,6 @@ img.loaded {
     height: 250px !important;
   }
 
-  /* Mobile menu improvements */
   .navbar-menu {
     left: 10px !important;
     right: 10px !important;
